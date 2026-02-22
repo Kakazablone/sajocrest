@@ -54,10 +54,10 @@
     <div class="main-brand">SaJocrest <span class="accent">Agrofarm</span></div>
   </div>
 
-  <a href="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" id="manual-btn">Enter SaJocrest</a>
+  <a href="https://script.google.com/macros/s/AKfycby_yNQZgUF4ID6ZVVWFEbvKzFCOiM-6L8UREb6qgHX6DwLQPsxoCYovfsCOpaV22k3ODA/exec" id="manual-btn">Enter SaJocrest</a>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_yNQZgUF4ID6ZVVWFEbvKzFCOiM-6L8UREb6qgHX6DwLQPsxoCYovfsCOpaV22k3ODA/exec";
 
     function startApp() {
       // Small delay to let the user enjoy the typography (1.5 seconds)
@@ -65,7 +65,7 @@
         // REPLACE instead of HREF: This is cleaner for the browser history
         // and helps prevent "Desktop Mode" triggers on Android.
         window.location.replace(SCRIPT_URL);
-      }, 1500);
+      }, 1000);
 
       // FALLBACK: If the app hasn't redirected in 5 seconds (common on slow iPhones)
       // we show a nice button so the user isn't stuck on a blank screen.
