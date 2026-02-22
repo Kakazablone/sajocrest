@@ -1,16 +1,16 @@
 {
-  "short_name": "\u200B",
-  "name": "\u200B",
+  "short_name": "SaJocrest",
+  "name": "",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "logo.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
   "start_url": "index.html",
-  "background_color": "#2c3e50",
+  "background_color": "#ffffff",
   "display": "standalone",
-  "theme_color": "#2c3e50"
+  "theme_color": "#ffffff"
 }
