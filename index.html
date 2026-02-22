@@ -1,68 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html style="background: #2c3e50;">
 <head>
   <title>SaJocrest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json?v=99"> <!-- Versioning forces a refresh -->
   <link rel="apple-touch-icon" href="icon.png">
   
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
   <style>
-    :root { background: linear-gradient(135deg, #2c3e50, #18bc9c); } 
-    /* 1. INSTANT GRADIENT BACKGROUND */
     body, html { 
-      margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; 
-      background: #2c3e50; /* Fallback color */
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
+      /* The exact gradient you requested */
+      background: linear-gradient(135deg, #2c3e50, #18bc9c) fixed;
+      color: white; font-family: sans-serif;
     }
     
-    /* 2. INSTANT LOADER (No Bootstrap needed for the look) */
-    #wrapper-loader {
+    #loader {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 99999; color: white; transition: opacity 0.4s ease;
+      z-index: 999; text-align: center;
+      transition: opacity 0.8s ease;
     }
 
-    /* CSS-only spinner so we don't wait for Bootstrap to load */
-    .spinner {
-      width: 40px; height: 40px;
-      border: 4px solid rgba(255,255,255,0.2);
-      border-left-color: #18bc9c;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
+    .taglines {
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 1s forwards 0.3s;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,0.7);
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .sync-text { font-weight: bold; letter-spacing: 1px; font-size: 14px; }
+    .main-brand {
+      font-size: 32px;
+      font-weight: bold;
+      opacity: 0;
+      animation: fadeIn 1.2s forwards 0.8s;
+    }
 
-    iframe { border: none; width: 100vw; height: 100vh; opacity: 0; transition: opacity 0.5s ease; }
-    iframe.loaded { opacity: 1; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    iframe { border: none; width: 100vw; height: 100vh; opacity: 0; transition: opacity 1s ease; }
+    iframe.visible { opacity: 1; }
   </style>
 </head>
 <body>
 
-  <div id="wrapper-loader">
-    <div class="spinner"></div>
-    <div class="sync-text">SYNCING...</div>
+  <div id="loader">
+    <div class="taglines">Kennel • Poultry • Livestock</div>
+    <div class="main-brand">SaJocrest Agrofarm</div>
   </div>
 
-  <iframe id="appFrame" src="https://script.google.com/macros/s/AKfycbyTxniB_1z4QNgihsJin8Ko42OIcUbY1UAL6RpdtJKX-nKeTAoelRBR6bp605xO5iRHig/exec" onload="hideWrapperLoader()"></iframe>
+  <iframe id="appFrame" src="https://script.google.com/macros/s/.../exec" onload="showApp()"></iframe>
 
   <script>
-    function hideWrapperLoader() {
-      const loader = document.getElementById('wrapper-loader');
+    function showApp() {
+      const loader = document.getElementById('loader');
       const frame = document.getElementById('appFrame');
       
-      // Small delay to ensure Google Script is fully rendered
+      // Keep the user looking at the tagline for a moment while Google Script initializes
       setTimeout(() => {
         loader.style.opacity = '0';
-        frame.classList.add('loaded');
-        setTimeout(() => { loader.style.display = 'none'; }, 500);
-      }, 700);
+        frame.classList.add('visible');
+        setTimeout(() => { loader.style.display = 'none'; }, 800);
+      }, 1500);
     }
   </script>
 </body>
