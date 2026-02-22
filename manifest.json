@@ -1,0 +1,21 @@
+{
+  "short_name": "SaJocrest",
+  "name": "SaJocrest Agrofarm",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#2c3e50",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#18bc9c"
+}
