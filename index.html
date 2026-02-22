@@ -3,68 +3,69 @@
 <head>
   <title>SaJocrest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-  <link rel="manifest" href="manifest.json?v=99"> <!-- Versioning forces a refresh -->
+  <link rel="manifest" href="manifest.json?v=4">
   <link rel="apple-touch-icon" href="icon.png">
   
+  <!-- iOS Specific Tags to stay in "App Mode" -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <style>
     body, html { 
       margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
-      /* The exact gradient you requested */
       background: linear-gradient(135deg, #2c3e50, #18bc9c) fixed;
       color: white; font-family: sans-serif;
-    }
-    
-    #loader {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 999; text-align: center;
-      transition: opacity 0.8s ease;
+      text-align: center;
     }
-
-    .taglines {
-      font-size: 14px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      opacity: 0;
-      animation: fadeIn 1s forwards 0.3s;
-      margin-bottom: 10px;
-      color: rgba(255,255,255,0.7);
+    .brand { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+    .loader {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid #18bc9c;
+      border-radius: 50%; width: 30px; height: 30px;
+      animation: spin 1s linear infinite;
     }
-
-    .main-brand {
-      font-size: 32px;
-      font-weight: bold;
-      opacity: 0;
-      animation: fadeIn 1.5s forwards 1s;
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    /* Elegant button for iOS if auto-redirect fails */
+    #manualLink {
+      display: none; margin-top: 20px; padding: 12px 24px;
+      background: #18bc9c; color: white; text-decoration: none;
+      border-radius: 8px; font-weight: bold;
     }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-    iframe { border: none; width: 100vw; height: 100vh; opacity: 0; transition: opacity 1s ease; }
-    iframe.visible { opacity: 1; }
   </style>
 </head>
 <body>
 
-  <div id="loader">
-    <div class="taglines">Kennel • Poultry • Livestock</div>
-    <div class="main-brand">SaJocrest Agrofarm</div>
-  </div>
-
-  <iframe id="appFrame" src="https://script.google.com/macros/s/AKfycbyTxniB_1z4QNgihsJin8Ko42OIcUbY1UAL6RpdtJKX-nKeTAoelRBR6bp605xO5iRHig/exec" onload="showApp()"></iframe>
+  <div class="brand">SaJocrest Agrofarm</div>
+  <div class="loader" id="loadingCircle"></div>
+  
+  <a href="https://script.google.com/macros/s/AKfycbyTxniB_1z4QNgihsJin8Ko42OIcUbY1UAL6RpdtJKX-nKeTAoelRBR6bp605xO5iRHig/exec" id="manualLink">Enter App</a>
 
   <script>
-    function showApp() {
-      const loader = document.getElementById('loader');
-      const frame = document.getElementById('appFrame');
-      
-      // Keep the user looking at the tagline for a moment while Google Script initializes
-      setTimeout(() => {
-        loader.style.opacity = '0';
-        frame.classList.add('visible');
-        setTimeout(() => { loader.style.display = 'none'; }, 800);
-      }, 1500);
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyTxniB_1z4QNgihsJin8Ko42OIcUbY1UAL6RpdtJKX-nKeTAoelRBR6bp605xO5iRHig/exec";
+
+    // 1. THE REDIRECT LOGIC
+    // We use top.location.replace to break out of the wrapper 
+    // This allows the iPhone to handle Google Cookies correctly.
+    function launchApp() {
+      // Small timeout so the user sees your beautiful branding for 1 second
+      setTimeout(function() {
+        window.location.href = scriptUrl;
+      }, 1200);
     }
+
+    // Check if we are in "Standalone" (Home Screen) mode
+    if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) {
+       launchApp();
+    } else {
+       // If just viewing in browser, show the manual link to help user
+       document.getElementById('loadingCircle').style.display = 'none';
+       document.getElementById('manualLink').style.display = 'inline-block';
+    }
+    
+    // Fallback for some iOS versions
+    launchApp();
   </script>
 </body>
 </html>
