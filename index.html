@@ -3,79 +3,78 @@
 <head>
   <title>SaJocrest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-  <link rel="manifest" href="manifest.json?v=10">
+  <link rel="manifest" href="manifest.json?v=11">
   <link rel="apple-touch-icon" href="icon.png">
   
+  <meta name="theme-color" content="#2c3e50">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <style>
-    /* 1. THE GRADIENT - Hardcoded for instant load */
     body, html { 
       margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
       background: linear-gradient(135deg, #2c3e50, #18bc9c) fixed;
       color: white; font-family: -apple-system, sans-serif;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center;
     }
     
-    /* 2. THE TYPOGRAPHY ANIMATION */
-    .taglines {
-      font-size: 12px; letter-spacing: 4px; text-transform: uppercase;
-      opacity: 0; animation: fadeIn 0.8s forwards 0.2s;
-      color: rgba(255,255,255,0.7); margin-bottom: 10px;
+    #wrapper-loader {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 99999; text-align: center; transition: opacity 0.8s ease;
     }
 
-    .main-brand {
-      font-size: 32px; font-weight: 800; letter-spacing: -1px;
-      opacity: 0; animation: fadeIn 1s forwards 0.6s;
-    }
+    .taglines { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+    .brand { font-size: 32px; font-weight: 800; }
+    .accent { color: white; font-weight: 300; }
 
-    .accent { color: #18bc9c; font-weight: 300; }
-
-    @keyframes fadeIn { 
-      from { opacity: 0; transform: translateY(10px); } 
-      to { opacity: 1; transform: translateY(0); } 
+    /* Hide iframe by default */
+    iframe { 
+      border: none; width: 100vw; height: 100vh; 
+      display: none; opacity: 0; transition: opacity 1s ease; 
     }
-
-    /* 3. HIDDEN FALLBACK (Only shows if redirect fails) */
-    #manual-btn {
-      display: none; margin-top: 30px; padding: 12px 24px;
-      background: white; color: #2c3e50; border-radius: 50px;
-      text-decoration: none; font-weight: bold; font-size: 14px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
+    iframe.active { display: block; opacity: 1; }
   </style>
 </head>
 <body>
 
-  <div id="loader-content">
+  <div id="wrapper-loader">
     <div class="taglines">Kennel • Poultry • Livestock</div>
-    <div class="main-brand">SaJocrest <span class="accent">Agrofarm</span></div>
+    <div class="brand">SaJocrest <span class="accent">Agrofarm</span></div>
   </div>
 
-  <a href="https://script.google.com/macros/s/AKfycby_yNQZgUF4ID6ZVVWFEbvKzFCOiM-6L8UREb6qgHX6DwLQPsxoCYovfsCOpaV22k3ODA/exec" id="manual-btn">Enter SaJocrest</a>
+  <iframe id="appFrame"></iframe>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_yNQZgUF4ID6ZVVWFEbvKzFCOiM-6L8UREb6qgHX6DwLQPsxoCYovfsCOpaV22k3ODA/exec";
+    
+    // 1. Detect if the user is on an iPhone/iPad
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-    function startApp() {
-      // Small delay to let the user enjoy the typography (1.5 seconds)
-      setTimeout(function() {
-        // REPLACE instead of HREF: This is cleaner for the browser history
-        // and helps prevent "Desktop Mode" triggers on Android.
-        window.location.replace(SCRIPT_URL);
-      }, 1000);
+    function init() {
+      const frame = document.getElementById('appFrame');
+      const loader = document.getElementById('wrapper-loader');
 
-      // FALLBACK: If the app hasn't redirected in 5 seconds (common on slow iPhones)
-      // we show a nice button so the user isn't stuck on a blank screen.
-      setTimeout(function() {
-        document.getElementById('manual-btn').style.display = 'inline-block';
-      }, 5000);
+      if (isIOS) {
+        // --- IPHONE LOGIC: REDIRECT ---
+        // Necessary because frames block login cookies on iOS
+        setTimeout(() => {
+          window.location.replace(SCRIPT_URL);
+        }, 2000);
+      } else {
+        // --- ANDROID/OTHER LOGIC: IFRAME ---
+        // Keeps the gradient, hides the G, and stays "Zero-Flash"
+        frame.src = SCRIPT_URL;
+        frame.onload = function() {
+          setTimeout(() => {
+            loader.style.opacity = '0';
+            frame.classList.add('active');
+            setTimeout(() => { loader.style.display = 'none'; }, 800);
+          }, 1000);
+        };
+      }
     }
 
-    // Launch immediately
-    startApp();
+    init();
   </script>
 </body>
 </html>
