@@ -117,7 +117,7 @@
         });
 
         if (isIOS) {
-          setTimeout(() => { window.location.replace(SCRIPT_URL); }, 4000);
+          setTimeout(() => { window.location.replace(SCRIPT_URL); }, 2500);
         } else {
           frame.src = SCRIPT_URL;
           frame.onload = function() {
@@ -125,7 +125,7 @@
             setTimeout(() => {
               loader.classList.add('hidden');
               frame.classList.add('active');
-            }, 2000);
+            }, 1500);
           };
         }
       }, 1000); 
