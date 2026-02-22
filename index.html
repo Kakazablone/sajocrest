@@ -11,57 +11,63 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
   <style>
-    body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: -apple-system, sans-serif; background: #ffffff; }
+    body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #ffffff; }
 
-    /* STAGE 1: THE WHITE SPLASH */
+    /* STAGE 1: SYSTEM HAND-OFF (White) */
     #white-splash {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #ffffff;
       display: flex; align-items: center; justify-content: center;
       z-index: 100;
-      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #white-splash img { width: 180px; height: auto; }
+    #white-splash img { width: 160px; height: auto; opacity: 0.9; }
 
-    /* STAGE 2: THE GRADIENT & FLOATING TAGLINES */
+    /* STAGE 2: PREMIUM LOADER (Gradient) */
     #gradient-loader {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, #2c3e50, #18bc9c) fixed;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 50; transition: opacity 1.5s ease-in-out;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50; transition: opacity 1s ease-in-out;
     }
 
-    .tagline-container { text-align: center; color: white; }
+    /* 60% Centered Container for Taglines */
+    .tagline-container { 
+      width: 60%;
+      height: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+    }
 
     .tag {
       display: block;
-      font-size: 14px;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      margin: 20px 0;
-      opacity: 0;
+      font-size: 13px;
       font-weight: 300;
-      /* Animation for entry */
-      animation: revealAndFloat 4s ease-in-out infinite;
+      letter-spacing: 0.4em; /* Premium wide kerning */
+      text-transform: uppercase;
+      margin: 12px 0;
+      opacity: 0;
+      /* Cubic-bezier for that "weighted" high-end feel */
+      transform: translateY(15px);
+      transition: all 1.2s cubic-bezier(0.2, 0, 0, 1);
     }
 
-    /* Staggered Delays for the "One by One" effect */
-    .tag:nth-child(1) { animation-delay: 0.2s; }
-    .tag:nth-child(2) { animation-delay: 0.8s; }
-    .tag:nth-child(3) { animation-delay: 1.4s; }
-
-    @keyframes revealAndFloat {
-      0% { opacity: 0; transform: translateY(20px) scale(0.9); filter: blur(5px); }
-      20% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
-      50% { transform: translateY(-15px); opacity: 0.8; }
-      100% { transform: translateY(0px); opacity: 1; }
+    /* Controlled reveal via Javascript */
+    .tag.visible {
+      opacity: 0.8;
+      transform: translateY(0);
     }
 
-    /* STAGE 3: THE SCRIPT IFRAME */
+    /* STAGE 3: THE APP (Script) */
     iframe { 
       position: absolute; top: 0; left: 0; border: none; width: 100vw; height: 100vh; 
-      z-index: 10; opacity: 0; transform: scale(1.02);
-      transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10; opacity: 0; 
+      transform: scale(0.98); /* App starts slightly smaller and grows into view */
+      transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.2, 0, 0, 1);
     }
     iframe.active { opacity: 1; transform: scale(1); }
 
@@ -70,21 +76,18 @@
 </head>
 <body>
 
-  <!-- LAYER 1: White background with Logo -->
   <div id="white-splash">
     <img src="logo.png" alt="SaJocrest">
   </div>
 
-  <!-- LAYER 2: Gradient with Floating Taglines -->
   <div id="gradient-loader">
     <div class="tagline-container">
-      <span class="tag">Kennel</span>
-      <span class="tag">Poultry</span>
-      <span class="tag">Livestock</span>
+      <span class="tag" id="tag1">Kennel</span>
+      <span class="tag" id="tag2">Poultry</span>
+      <span class="tag" id="tag3">Livestock</span>
     </div>
   </div>
 
-  <!-- LAYER 3: Google Script Content -->
   <iframe id="appFrame"></iframe>
 
   <script>
@@ -95,28 +98,37 @@
       const splash = document.getElementById('white-splash');
       const loader = document.getElementById('gradient-loader');
       const frame = document.getElementById('appFrame');
+      
+      const tags = [
+        document.getElementById('tag1'),
+        document.getElementById('tag2'),
+        document.getElementById('tag3')
+      ];
 
-      // 1. Fade the white logo splash into the gradient after 1.5 seconds
+      // 1. Move from White Splash to Gradient
       setTimeout(() => {
         splash.classList.add('hidden');
         
-        if (isIOS) {
-          // iOS needs a direct redirect - we wait for the tagline animation to play out
+        // 2. Staggered, purposeful reveal of taglines
+        tags.forEach((tag, index) => {
           setTimeout(() => {
-            window.location.replace(SCRIPT_URL);
-          }, 4500);
+            tag.classList.add('visible');
+          }, 400 * index); // Fast but sequential
+        });
+
+        if (isIOS) {
+          setTimeout(() => { window.location.replace(SCRIPT_URL); }, 4000);
         } else {
-          // Android: Start loading the script in the background
           frame.src = SCRIPT_URL;
           frame.onload = function() {
-            // Give the taglines time to float (minimum 3.5 seconds total)
+            // Wait for at least 3 seconds so the user experiences the branding
             setTimeout(() => {
               loader.classList.add('hidden');
               frame.classList.add('active');
-            }, 3000);
+            }, 3200);
           };
         }
-      }, 1500); 
+      }, 1000); 
     }
 
     window.addEventListener('load', init);
