@@ -43,17 +43,17 @@
       color: white;
     }
 
-    .tag {
+  .tag {
       display: block;
       font-size: 13px;
       font-weight: 300;
-      letter-spacing: 0.4em; /* Premium wide kerning */
+      letter-spacing: 0.4em;
       text-transform: uppercase;
       margin: 12px 0;
       opacity: 0;
-      /* Cubic-bezier for that "weighted" high-end feel */
       transform: translateY(15px);
-      transition: all 1.2s cubic-bezier(0.2, 0, 0, 1);
+      /* Reduced from 1.2s to 0.8s for speed */
+      transition: all 0.8s cubic-bezier(0.2, 0, 0, 1); 
     }
 
     /* Controlled reveal via Javascript */
@@ -104,31 +104,33 @@
         document.getElementById('tag2'),
         document.getElementById('tag3')
       ];
-
-      // 1. Move from White Splash to Gradient
+    
+      // 1. Quick hand-off from white splash to gradient
       setTimeout(() => {
         splash.classList.add('hidden');
         
-        // 2. Staggered, purposeful reveal of taglines
+        // 2. Reveal words one-by-one (350ms apart)
+        // Word 1 starts @ 0ms, Word 2 @ 350ms, Word 3 @ 700ms
         tags.forEach((tag, index) => {
           setTimeout(() => {
             tag.classList.add('visible');
-          }, 400 * index); // Fast but sequential
+          }, 350 * index); 
         });
-
+    
         if (isIOS) {
-          setTimeout(() => { window.location.replace(SCRIPT_URL); }, 2500);
+          // Redirect iOS after the 1500ms animation
+          setTimeout(() => { window.location.replace(SCRIPT_URL); }, 2000);
         } else {
           frame.src = SCRIPT_URL;
           frame.onload = function() {
-            // Wait for at least 3 seconds so the user experiences the branding
+            // Transition to Script exactly when animation ends
             setTimeout(() => {
               loader.classList.add('hidden');
               frame.classList.add('active');
-            }, 1500);
+            }, 1500); // This matches your 1500ms wait time
           };
         }
-      }, 1000); 
+      }, 800); // Delay before gradient starts (time logo stays on screen)
     }
 
     window.addEventListener('load', init);
