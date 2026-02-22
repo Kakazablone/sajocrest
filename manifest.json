@@ -1,12 +1,12 @@
 {
-  "short_name": "SaJocrest",
-  "name": "SaJocrest Agrofarm",
+  "short_name": "\u200B",
+  "name": "\u200B",
   "icons": [
     {
       "src": "icon.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
   "start_url": "index.html",
